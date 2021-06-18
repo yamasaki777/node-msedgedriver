@@ -39,7 +39,7 @@ if (platform === "linux") {
   console.log("Linux not supported.");
   process.exit(0);
 } else if (platform === "darwin" || platform === "freebsd") {
-  if (process.arch === "x64") {
+  if (process.arch === "x64" || process.arch === "arm64") {
     // @ts-ignore
     platform = "mac64";
   } else {
