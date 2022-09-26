@@ -1,15 +1,15 @@
 {
-  "name": "msedgedriver",
-  "version": "91.0.0",
+  "name": "newmsedgedriver",
+  "version": "105.0.1343.53",
   "keywords": [
     "msedgedriver",
     "selenium"
   ],
   "description": "Microsoft Edge Driver for Selenium",
-  "homepage": "https://github.com/uex-io/node-msedgedriver",
+  "homepage": "https://github.com/yamasaki777/node-msedgedriver",
   "repository": {
     "type": "git",
-    "url": "git://github.com/uex-io/node-msedgedriver.git"
+    "url": "git://github.com/yamasaki777/node-msedgedriver.git"
   },
   "license": "Apache-2.0",
   "author": {

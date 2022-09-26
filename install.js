@@ -57,7 +57,7 @@ let edgechromiumdriverBinaryFilePath;
 let downloadedFile = "";
 
 Promise.resolve()
-  .then(function() {
+  .then(function () {
     if (edgechromiumdriver_version === "LATEST")
       return getLatestVersion(getRequestOptions(cdnUrl + "/LATEST_STABLE"));
   })
@@ -77,7 +77,7 @@ Promise.resolve()
   .then(() => copyIntoPlace(tmpPath, libPath))
   .then(() => fixFilePermissions(helper.path))
   .then(() => console.log("Done. msedgedriver binary available at", helper.path))
-  .catch(function(err) {
+  .catch(function (err) {
     console.error("msedgedriver installation failed", err);
     process.exit(1);
   });
@@ -113,13 +113,13 @@ function verifyIfChromedriverIsAvailableAndHasCorrectVersion() {
     fs.accessSync(edgechromiumdriverBinaryFilePath, fs.constants.X_OK);
     const cp = child_process.spawn(edgechromiumdriverBinaryFilePath, ["--version"]);
     let str = "";
-    cp.stdout.on("data", function(data) {
+    cp.stdout.on("data", function (data) {
       str += data;
     });
-    cp.on("error", function() {
+    cp.on("error", function () {
       deferred.resolve(false);
     });
-    cp.on("close", function(code) {
+    cp.on("close", function (code) {
       if (code !== 0) return deferred.resolve(false);
       const parts = str.split(" ");
       if (parts.length < 3) return deferred.resolve(false);
@@ -227,11 +227,11 @@ function getRequestOptions(downloadPath) {
 
 function getLatestVersion(requestOptions) {
   const deferred = new Deferred();
-  request(requestOptions, function(err, response, data) {
+  request(requestOptions, function (err, response, data) {
     if (err) {
       deferred.reject("Error with http(s) request: " + err);
     } else {
-      edgechromiumdriver_version = data.trim();
+      edgechromiumdriver_version = data.replace(/[^0-9.]/g, "");
       deferred.resolve(true);
     }
   });
@@ -247,11 +247,11 @@ function requestBinary(requestOptions, filePath) {
 
   const client = request(requestOptions);
 
-  client.on("error", function(err) {
+  client.on("error", function (err) {
     deferred.reject("Error with http(s) request: " + err);
   });
 
-  client.on("data", function(data) {
+  client.on("data", function (data) {
     fs.writeSync(outFile, data, 0, data.length, null);
     count += data.length;
     if (count - notifiedCount > 800000) {
@@ -260,7 +260,7 @@ function requestBinary(requestOptions, filePath) {
     }
   });
 
-  client.on("end", function() {
+  client.on("end", function () {
     console.log("Received " + Math.floor(count / 1024) + "K total.");
     fs.closeSync(outFile);
     deferred.resolve(true);
@@ -277,7 +277,7 @@ function extractDownload() {
   }
   const deferred = new Deferred();
   console.log("Extracting zip contents");
-  extractZip(path.resolve(downloadedFile), { dir: tmpPath }, function(err) {
+  extractZip(path.resolve(downloadedFile), { dir: tmpPath }, function (err) {
     if (err) {
       if (err.message.includes(libFileName)) {
         console.log("Ignoring complaint: " + err);
@@ -293,7 +293,7 @@ function extractDownload() {
 }
 
 function copyIntoPlace(originPath, targetPath) {
-  return del(targetPath).then(function() {
+  return del(targetPath).then(function () {
     console.log("Copying to target path", targetPath);
 
     mkdirp.sync(targetPath, "0777");
@@ -302,7 +302,7 @@ function copyIntoPlace(originPath, targetPath) {
     console.log("reading orig folder ", originPath);
     const files = fs.readdirSync(originPath);
     let justFiles = [];
-    files.map(function(name) {
+    files.map(function (name) {
       var stat = fs.statSync(path.join(originPath, name));
       if (!stat.isDirectory() && (name.startsWith("msedgedriver") || name === libFileName)) {
         console.log("handling file ", name);
@@ -312,7 +312,7 @@ function copyIntoPlace(originPath, targetPath) {
       }
     });
 
-    const promises = justFiles.map(function(name) {
+    const promises = justFiles.map(function (name) {
       const deferred = new Deferred();
 
       const file = path.join(originPath, name);
@@ -322,7 +322,7 @@ function copyIntoPlace(originPath, targetPath) {
       console.log("writing file ", targetFile);
       const writer = fs.createWriteStream(targetFile);
 
-      writer.on("close", function() {
+      writer.on("close", function () {
         deferred.resolve(true);
       });
 
@@ -353,7 +353,7 @@ function Deferred() {
   this.resolve = null;
   this.reject = null;
   this.promise = new Promise(
-    function(resolve, reject) {
+    function (resolve, reject) {
       this.resolve = resolve;
       this.reject = reject;
     }.bind(this)
