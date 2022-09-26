@@ -36,8 +36,12 @@ let edgechromiumdriver_version =
   process.env.EDGECHROMIUMDRIVER_VERSION ||
   helper.version;
 if (platform === "linux") {
-  console.log("Linux not supported.");
-  process.exit(0);
+  if (process.arch === 'arm64' || process.arch === 'x64') {
+    platform = "linux64";
+  } else {
+    console.log('Only Linux 64 bits supported.');
+    process.exit(1);
+  }
 } else if (platform === "darwin" || platform === "freebsd") {
   if (process.arch === "x64" || process.arch === "arm64") {
     // @ts-ignore
